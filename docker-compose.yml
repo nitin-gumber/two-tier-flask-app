@@ -12,7 +12,6 @@ services:
     networks:
       - two_tier_network
     healthcheck:
-      # Password 'root' hai toh yahan vahi use karein
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot"]
       interval: 10s
       timeout: 5s
@@ -20,15 +19,13 @@ services:
       start_period: 60s
 
   flask-app:
-    build:
-      context: .
+    image: nitingumberdev/two-tier-flask-app
     container_name: flask-app
     ports:
       - "5000:5000"
     environment:
-      # AB YEH APP.PY SE MATCH KAREGA ✅
-      MYSQL_HOST: mysql          # 'mysql' service ka naam hai
-      MYSQL_USER: root           # Root use kar rahe hain toh password 'root' hoga
+      MYSQL_HOST: mysql         
+      MYSQL_USER: root           
       MYSQL_PASSWORD: root
       MYSQL_DB: devops
     depends_on:
@@ -37,7 +34,7 @@ services:
     networks:
       - two_tier_network
     restart: always
-    # Indentation thik kar di
+    
     healthcheck:
       test: ["CMD-SHELL", "curl -f http://localhost:5000/health || exit 1"]
       interval: 10s
